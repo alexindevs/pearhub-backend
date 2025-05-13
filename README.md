@@ -42,7 +42,7 @@ The feed engine currently uses a **hybrid ranking system** that blends user-spec
 
 ### 🎯 Current Scoring Strategy
 
-If a user has no prior interactions (cold start), content is ranked by:
+If a user has no prior interactions (cold start), content is ranked by popularity and interaction:
 
 ```ts
 score = views * 0.5 + likes * 1.5 + comments * 1.0 + shares * 2.0
