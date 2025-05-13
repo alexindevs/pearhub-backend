@@ -69,10 +69,7 @@ PearHub’s AI logic is designed to evolve. In future versions, we plan to repla
 
 #### 🧬 How it will work
 
-- Each piece of content (title, tags, description) will be embedded using a model like:
-
-  - OpenAI’s `text-embedding-ada`
-  - Google’s Universal Sentence Encoder
+- Each piece of content (title, tags, description) will be embedded using a model like OpenAI’s `text-embedding-ada`
 - Each user’s interaction history will form a **“taste vector”**
 - Content will be scored using **cosine similarity** between vectors
 - Resulting in deep contextual matching between **users and content**, far beyond exact tag overlap
@@ -81,7 +78,7 @@ This system will unlock:
 
 - 🧠 Smarter recommendations
 - 📈 Better scaling as data grows
-- 🧬 ML-integrated personalization without losing explainability
+- 🧬 ML/AI-integrated personalization
 
 ---
 
