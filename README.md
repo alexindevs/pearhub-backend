@@ -128,7 +128,7 @@ npm run dev
 | Content        | `/content`            |
 | Interactions   | `/interactions`       |
 | Memberships    | `/memberships`        |
-| Feed           | `/feed/:businessSlug` |
+| Feed           | `/feed` |
 | Analytics      | `/analytics`          |
 
 ---
