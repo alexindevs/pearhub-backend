@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { InteractionService } from '../services/interaction.service';
 import { InteractionSchema, DeleteInteractionSchema } from '../validators/interaction.validator';
 import { AuthenticatedRequest } from '../middlewares/auth.middleware';

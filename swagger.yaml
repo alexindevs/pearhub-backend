@@ -519,6 +519,65 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+  /feed/{businessSlug}:
+    get:
+      tags:
+        - Feed
+      summary: Get personalized, ranked content feed for a business
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: businessSlug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the business to fetch feed for
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: List of personalized content ranked by relevance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Content'
+        '403':
+          description: Unauthorized (not a MEMBER or not subscribed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Business not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
 components:
   securitySchemes:

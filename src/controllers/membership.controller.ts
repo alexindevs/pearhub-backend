@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { MembershipService } from '../services/membership.service';
 import { CreateMembershipSchema } from '../validators/membership.validator';
 import { AuthenticatedRequest } from '../middlewares/auth.middleware';

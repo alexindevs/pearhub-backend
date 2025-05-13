@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { AnalyticsService } from '../services/analytics.service';
 import { AnalyticsQuerySchema } from '../validators/analytics.validator';
 import { AuthenticatedRequest } from '../middlewares/auth.middleware';
