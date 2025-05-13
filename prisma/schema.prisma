@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  BUSINESS
+  ADMIN
+}
+
+enum InteractionType {
+  VIEW
+  CLICK
+  LIKE
+  SHARE
+  COMMENT
+}
+
+enum ContentType {
+  TEXT
+  IMAGE
+  LINK
+  LONGFORM
+}
+
+model User {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  password  String
+  name      String
+  avatarUrl String?
+  role      Role    @default(MEMBER)
+
+  memberships       Membership[]
+  createdBusinesses Business[]    @relation("BusinessOwner")
+  interactions      Interaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shares     Share[]
+}
+
+model Business {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  owner       User         @relation("BusinessOwner", fields: [ownerId], references: [id])
+  logo        String?
+  ownerId     String
+  memberships Membership[]
+  contents    Content[]
+}
+
+model Membership {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  business   Business @relation(fields: [businessId], references: [id])
+  businessId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, businessId]) // Prevent duplicate subscriptions
+}
+
+model Content {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  type         ContentType
+  body         String
+  mediaUrl     String?
+  tags         String[]
+  business     Business      @relation(fields: [businessId], references: [id])
+  businessId   String
+  interactions Interaction[]
+  createdAt    DateTime      @default(now())
+  Share        Share[]
+}
+
+model Interaction {
+  id         String          @id @default(cuid())
+  type       InteractionType
+  payload    String? // used for comments or share metadata
+  user       User            @relation(fields: [userId], references: [id])
+  userId     String
+  content    Content         @relation(fields: [contentId], references: [id])
+  contentId  String
+  businessId String // 👈 from content.businessId
+  createdAt  DateTime        @default(now())
+
+  @@unique([userId, contentId, type])
+}
+
+model Share {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId String
+  uuid      String   @unique
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+}

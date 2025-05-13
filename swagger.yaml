@@ -1,0 +1,930 @@
+openapi: 3.0.3
+info:
+  title: PearHub Backend API
+  description: API documentation for the PearHub backend.
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+    description: Local development server
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Sign up a new user (Member or Business)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: Signup successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccessResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupErrorResponse'
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Log in as a member or business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccessResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupErrorResponse'
+  /business/me:
+    get:
+      tags:
+        - Business
+      summary: Get the authenticated business's profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Business profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessProfile'
+        '403':
+          description: Not a business account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Not a business account
+    put:
+      tags:
+        - Business
+      summary: Update the authenticated business’s profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBusinessRequest'
+      responses:
+        '200':
+          description: Business profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessProfile'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessValidationError'
+  /business/{slug}/meta:
+    get:
+      tags:
+        - Business
+      summary: Get public metadata for a business by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: The unique slug of the business
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBusinessMeta'
+        '404':
+          description: Business not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Business not found
+  /content:
+    post:
+      tags:
+        - Content
+      summary: Create new content for the business
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContentRequest'
+      responses:
+        '201':
+          description: Content created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentValidationError'
+
+    get:
+      tags:
+        - Content
+      summary: Get all content created by the authenticated business
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Content'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /content/{id}:
+    get:
+      tags:
+        - Content
+      summary: Get a specific content item by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Content item retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '404':
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    put:
+      tags:
+        - Content
+      summary: Update a specific content item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContentRequest'
+      responses:
+        '200':
+          description: Content updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentValidationError'
+
+    delete:
+      tags:
+        - Content
+      summary: Delete a specific content item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Content deleted successfully
+        '404':
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /memberships:
+    post:
+      tags:
+        - Membership
+      summary: Join a business
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMembershipRequest'
+      responses:
+        '201':
+          description: Membership created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Membership'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipValidationError'
+
+    get:
+      tags:
+        - Membership
+      summary: Get all businesses the user is subscribed to
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of memberships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Membership'
+
+  /memberships/{id}:
+    delete:
+      tags:
+        - Membership
+      summary: Leave a business
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successfully left the business
+        '404':
+          description: Membership not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Membership not found
+  /interactions:
+    post:
+      tags:
+        - Interaction
+      summary: Submit an interaction on a piece of content
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionRequest'
+      responses:
+        '200':
+          description: Interaction recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interaction'
+        '400':
+          description: Interaction already exists or bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                alreadyLiked:
+                  summary: Already interacted
+                  value:
+                    error: You already liked this post
+        '403':
+          description: User is not allowed to interact with the content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: You must be a member to interact with this content
+    delete:
+      tags:
+        - Interaction
+      summary: Remove an interaction (like, dislike, comment, or share)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [LIKE, DISLIKE, SHARE, COMMENT]
+        - in: query
+          name: contentId
+          required: true
+          schema:
+            type: string
+            description: CUID of the content
+      responses:
+        '204':
+          description: Interaction deleted successfully
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteInteractionValidationError'
+        '404':
+          description: Interaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Interaction not found
+
+  /analytics/overview:
+    get:
+      tags:
+        - Analytics
+      summary: Get total content and engagement stats
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Overview stats returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /analytics/memberships:
+    get:
+      tags:
+        - Analytics
+      summary: Get new memberships in a time range
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsQueryParams'
+      responses:
+        '200':
+          description: Membership count returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+
+  /analytics/engagement:
+    get:
+      tags:
+        - Analytics
+      summary: Get engagement breakdown in a time range
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsQueryParams'
+      responses:
+        '200':
+          description: Engagement data
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /analytics/top-content:
+    get:
+      tags:
+        - Analytics
+      summary: Get top-performing content
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsQueryParams'
+      responses:
+        '200':
+          description: Top content array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Content'
+
+  /analytics/trends:
+    get:
+      tags:
+        - Analytics
+      summary: Get trend breakdown over time
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsQueryParams'
+      responses:
+        '200':
+          description: Trend breakdown returned
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    AnalyticsQueryParams:
+      name: query
+      in: query
+      schema:
+        type: object
+        properties:
+          type:
+            type: string
+            enum: [daily, weekly, monthly]
+          day:
+            type: string
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+            example: '2025-05-13'
+          week:
+            type: string
+            enum: [current, previous]
+          month:
+            type: string
+            pattern: '^\d{4}-\d{2}$'
+            example: '2025-05'
+          limit:
+            type: integer
+            minimum: 1
+            maximum: 100
+      style: form
+      explode: true
+
+  schemas:
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - role
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        name:
+          type: string
+        avatarUrl:
+          type: string
+          format: uri
+        role:
+          type: string
+          enum: [MEMBER, BUSINESS]
+        businessName:
+          type: string
+          description: Required only if role is BUSINESS
+      example:
+        email: ceo@pearhub.io
+        password: supersecure123
+        name: Alexin.
+        avatarUrl: https://static.vecteezy.com/system/resources/previews/015/583/703/non_2x/pear-fruit-logo-icon-illustration-vector.jpg
+        role: BUSINESS
+        businessName: PearHub
+
+    SignupSuccessResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            name:
+              type: string
+            avatarUrl:
+              type: string
+              format: uri
+            role:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          id: cmamj07pf0000o7neitnnm2x5
+          email: ceo@pearhub.io
+          name: Alexin.
+          avatarUrl: https://static.vecteezy.com/system/resources/previews/015/583/703/non_2x/pear-fruit-logo-icon-illustration-vector.jpg
+          role: BUSINESS
+          createdAt: 2025-05-13T13:06:52.035Z
+          updatedAt: 2025-05-13T13:06:52.035Z
+
+    SignupErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string
+      example:
+        errors:
+          - code: custom
+            message: Business name is required for business accounts.
+            path:
+              - businessName
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      example:
+        email: reader01@gmail.com
+        password: readerpass456
+    BusinessProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        logo:
+          type: string
+          format: uri
+        ownerId:
+          type: string
+      example:
+        id: cmamj07tw0002o7neovr3lkqk
+        name: PearHub
+        slug: pearhub
+        logo: https://static.vecteezy.com/system/resources/previews/015/583/703/non_2x/pear-fruit-logo-icon-illustration-vector.jpg
+        ownerId: cmamj07pf0000o7neitnnm2x5
+
+    UpdateBusinessRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        logo:
+          type: string
+          format: uri
+      example:
+        name: PearHub LLC
+
+    BusinessValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string
+      example:
+        errors:
+          - code: custom
+            message: At least one field (name or logo) must be provided.
+            path: []
+    PublicBusinessMeta:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        logo:
+          type: string
+          format: uri
+      example:
+        name: PearHub Inc.
+        slug: pearhub
+        logo: https://static.vecteezy.com/system/resources/previews/015/583/703/non_2x/pear-fruit-logo-icon-illustration-vector.jpg
+
+    CreateContentRequest:
+      type: object
+      required:
+        - title
+        - description
+        - type
+        - body
+        - tags
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, IMAGE, LINK, LONGFORM]
+        body:
+          type: string
+        mediaUrl:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+
+    Content:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, IMAGE, LINK, LONGFORM]
+        body:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        businessId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: cmamlrzo90003o7lnhisoti1d
+        title: Guess what I'm eating today!
+        description: picture of food, nigerian meals
+        type: IMAGE
+        body: Wow, would you look at these lovely meals. Join us at PearHub for lunch!
+        mediaUrl: https://media.istockphoto.com/id/1383962772/photo/nigerian-food.webp
+        tags: [advertisement, food, nigerian]
+        businessId: cmamj07tw0002o7neovr3lkqk
+        createdAt: 2025-05-13T14:24:27.194Z
+    ContentValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string
+      example:
+        errors:
+          - code: custom
+            message: mediaUrl is required for IMAGE content.
+            path: [mediaUrl]
+    CreateMembershipRequest:
+      type: object
+      required:
+        - businessId
+      properties:
+        businessId:
+          type: string
+          description: CUID of the business to join
+      example:
+        businessId: clx4jrf7d0000v7kdc5vbh0g1
+
+    Membership:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        businessId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: clx4jsy680001v7kd1lvu3yq9
+        userId: clx4jqza20000v7kdh7sp2q6h
+        businessId: clx4jrf7d0000v7kdc5vbh0g1
+        createdAt: 2025-05-13T14:45:00.000Z
+
+    MembershipValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string
+      example:
+        errors:
+          - code: invalid_string
+            message: Invalid CUID
+            path:
+              - businessId
+    InteractionRequest:
+      type: object
+      required:
+        - type
+        - contentId
+      properties:
+        type:
+          type: string
+          enum: [VIEW, CLICK, LIKE, COMMENT, SHARE]
+        contentId:
+          type: string
+          description: CUID of the content
+        payload:
+          type: string
+          description: Required for COMMENT or SHARE
+
+    Interaction:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        payload:
+          type: string
+          nullable: true
+        userId:
+          type: string
+        contentId:
+          type: string
+        businessId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: cmammxfsi0005o7iniwvm561t
+        type: LIKE
+        payload: null
+        userId: cmamjafcv0003o7nes7ub7e8d
+        contentId: cmamlt7gz0005o7lngfn5ml4x
+        businessId: cmamj07tw0002o7neovr3lkqk
+        createdAt: 2025-05-13T14:56:41.011Z
+
+    DeleteInteractionValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  type: string
+      example:
+        errors:
+          - code: invalid_enum_value
+            message: Invalid enum value
+            path: [type]

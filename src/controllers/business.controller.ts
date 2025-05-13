@@ -1,0 +1,43 @@
+import { Request, Response, NextFunction } from 'express';
+import { BusinessService } from '../services/business.service';
+import { UpdateBusinessSchema } from '../validators/business.validator';
+import { AuthenticatedRequest } from '../middlewares/auth.middleware';
+
+export class BusinessController {
+  private businessService = new BusinessService();
+
+  async getMyBusiness(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      if (!businessId) return res.status(403).json({ message: 'Not a business account' });
+
+      const business = await this.businessService.getMyBusiness(businessId);
+      res.status(200).json(business);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateMyBusiness(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      if (!businessId) return res.status(403).json({ message: 'Not a business account' });
+
+      const data = UpdateBusinessSchema.parse(req.body);
+      const updated = await this.businessService.updateMyBusiness(businessId, data);
+      res.status(200).json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPublicBusinessMeta(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { slug } = req.params;
+      const meta = await this.businessService.getPublicBusinessMeta(slug);
+      res.status(200).json(meta);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
