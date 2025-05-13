@@ -1,6 +1,6 @@
 # 🍐 PearHub
 
-**PearHub** is a backend-powered SaaS platform that enables businesses to publish content and engage members through personalized feeds, tracked interactions, and detailed analytics. Built for scalability and smart engagement, it blends RESTful API structure with AI-lite ranking logic — ready for future evolution into a full-fledged recommendation engine.
+**PearHub** is a backend-powered SaaS platform that enables businesses to publish content and engage members through personalized feeds, tracked interactions, and detailed analytics. Built for scalability and smart engagement, it blends RESTful API structure with AI-lite ranking logic, ready for future evolution into a full-fledged recommendation engine.
 
 ---
 
@@ -59,7 +59,7 @@ If a user has interaction history, the engine:
 finalScore = tagScore + popularityScore + freshnessBoost - viewedPenalty
 ```
 
-This ensures every user sees the most engaging, contextually relevant content — with recency and novelty baked in.
+This ensures every user sees the most engaging, contextually relevant content with recency and novelty baked in.
 
 ---
 
@@ -138,10 +138,10 @@ npm run dev
 
 ## 👩🏾‍💻 Author
 
-Built by [@alexindevs](https://github.com/alexindevs) — for the Pearmonie technical assessment, but also as a real, shippable product engine.
+Built by [@alexindevs](https://github.com/alexindevs) for the Pearmonie technical assessment, but also as a real, shippable product engine.
 
 ---
 
 ## 📝 License
 
-MIT — Use it, fork it, build on it 🍐
+MIT: Use it, fork it, build on it 🍐
