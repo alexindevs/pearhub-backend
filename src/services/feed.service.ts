@@ -17,7 +17,7 @@ interface ContentWithMetrics {
   comments: number;
   shares: number;
   views: number;
-  [key: string]: any; // Allow for additional fields
+  [key: string]: any;
 }
 
 export class FeedService {
