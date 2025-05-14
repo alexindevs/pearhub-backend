@@ -34,7 +34,7 @@ export class FeedController {
         Number(limit)
       );
 
-      return res.status(200).json({ 
+      res.status(200).json({ 
         data: result.contents,
         pagination: {
           ...result.pagination,

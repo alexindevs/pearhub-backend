@@ -9,8 +9,8 @@ const controller = new MembershipController();
 
 router.use(requireAuth, authorizeRole([Role.MEMBER]));
 
-router.post('/', controller.join.bind(controller));
-router.get('/', controller.getMyMemberships.bind(controller));
-router.delete('/:id', controller.leave.bind(controller));
+router.post('/', controller.join);
+router.get('/', controller.getMyMemberships);
+router.delete('/:id', controller.leave);
 
 export default router;

@@ -58,7 +58,7 @@ model Business {
   slug        String       @unique
   owner       User         @relation("BusinessOwner", fields: [ownerId], references: [id])
   logo        String?
-  ownerId     String
+  ownerId     String       @unique
   memberships Membership[]
   contents    Content[]
 }

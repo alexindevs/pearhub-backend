@@ -37,6 +37,10 @@ app.use('/analytics', analyticsRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.get('/health', (_req, res) => {
+  res.status(200).json({ message: 'Server is healthy' });
+});
+
 // 404 handler
 app.use((_req, _res, next) => {
   next(new ApiError('Route not found', 404));

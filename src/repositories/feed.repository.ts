@@ -67,14 +67,29 @@ export class FeedRepository {
     });
   }
 
-  async enrichContentWithMetrics(contents: Content[]): Promise<any[]> {
+  async enrichContentWithMetrics(contents: (Content & { interactions?: Interaction[] })[]): Promise<{
+    id: string;
+    title: string;
+    description: string;
+    type: string;
+    body: string;
+    mediaUrl: string | null;
+    tags: string[];
+    businessId: string;
+    createdAt: Date;
+    likes: number;
+    comments: number;
+    shares: number;
+    views: number;
+    [key: string]: unknown;
+  }[]> {
     // Process the content to get the metrics in the format we need
-    return contents.map(content => {
+    return contents.map((content: Content & { interactions?: Interaction[] }) => {
       // Count different interaction types
-      const likes = content.interactions.filter(i => i.type === 'LIKE').length;
-      const comments = content.interactions.filter(i => i.type === 'COMMENT').length;
-      const shares = content.interactions.filter(i => i.type === 'SHARE').length;
-      const views = content.interactions.filter(i => i.type === 'VIEW').length;
+      const likes = content.interactions?.filter((i: Interaction) => i.type === 'LIKE').length || 0;
+      const comments = content.interactions?.filter((i: Interaction) => i.type === 'COMMENT').length || 0;
+      const shares = content.interactions?.filter((i: Interaction) => i.type === 'SHARE').length || 0;
+      const views = content.interactions?.filter((i: Interaction) => i.type === 'VIEW').length || 0;
 
       return {
         id: content.id,

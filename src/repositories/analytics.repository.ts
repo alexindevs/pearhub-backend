@@ -62,7 +62,7 @@ export class AnalyticsRepository {
         createdAt: { gte: from, lte: to },
       },
       _count: { _all: true },
-      orderBy: { _count: { _all: 'desc' } },
+      orderBy: { _count: { id: 'desc' } },
       take: limit,
     });
 

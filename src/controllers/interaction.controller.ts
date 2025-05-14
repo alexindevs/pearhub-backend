@@ -9,7 +9,10 @@ export class InteractionController {
   async interact(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
-      if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
 
       const data = InteractionSchema.parse(req.body);
       const interaction = await interactionService.interact({ ...data, userId });
@@ -23,7 +26,10 @@ export class InteractionController {
   async remove(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
-      if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
 
       const data = DeleteInteractionSchema.parse(req.query);
       await interactionService.removeInteraction({ ...data, userId });

@@ -10,7 +10,7 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: AuthenticatedRequest) => req.user?.userId || req.ip, // per-user if authenticated
+  keyGenerator: (req: AuthenticatedRequest) => req.user?.userId || req.ip || '', // per-user if authenticated
   skip: (req: Request) => {
     const type = req.body?.type;
     return type === 'VIEW';

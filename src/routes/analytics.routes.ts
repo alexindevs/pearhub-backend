@@ -9,10 +9,10 @@ const controller = new AnalyticsController();
 
 router.use(requireAuth, authorizeRole([Role.BUSINESS]));
 
-router.get('/overview', controller.overview.bind(controller));
-router.get('/memberships', controller.memberships.bind(controller));
-router.get('/engagement', controller.engagement.bind(controller));
-router.get('/top-content', controller.topContent.bind(controller));
-router.get('/trends', controller.trends.bind(controller));
+router.get('/overview', controller.overview);
+router.get('/memberships', controller.memberships);
+router.get('/engagement', controller.engagement);
+router.get('/top-content', controller.topContent);
+router.get('/trends', controller.trends);
 
 export default router;

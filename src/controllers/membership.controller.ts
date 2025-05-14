@@ -9,7 +9,10 @@ export class MembershipController {
   async join(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
-      if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
 
       const data = CreateMembershipSchema.parse(req.body);
       const result = await membershipService.joinBusiness(userId, data.businessId);
@@ -22,7 +25,10 @@ export class MembershipController {
   async getMyMemberships(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
-      if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
 
       const memberships = await membershipService.getMyMemberships(userId);
       res.status(200).json(memberships);
@@ -36,7 +42,10 @@ export class MembershipController {
       const userId = req.user?.userId;
       const { id } = req.params;
 
-      if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
 
       await membershipService.leaveBusiness(userId, id);
       res.status(204).send();

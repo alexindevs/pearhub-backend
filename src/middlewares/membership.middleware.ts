@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import prisma from '../prisma/client';
 import { ApiError } from '../utils/api-error';
 import { AuthenticatedRequest } from './auth.middleware';

@@ -14,7 +14,7 @@ const controller = new InteractionController();
 // - Membership to business associated with content
 router.use(requireAuth, authorizeRole([Role.MEMBER]), requireMembership);
 
-router.post('/', interactionRateLimiter, controller.interact.bind(controller));
-router.delete('/', controller.remove.bind(controller));
+router.post('/', interactionRateLimiter, controller.interact);
+router.delete('/', controller.remove);
 
 export default router;

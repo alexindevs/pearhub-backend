@@ -9,10 +9,10 @@ const controller = new ContentController();
 
 router.use(requireAuth, authorizeRole([Role.BUSINESS]));
 
-router.get('/', controller.getAll.bind(controller));
-router.post('/', controller.create.bind(controller));
-router.get('/:id', controller.getOne.bind(controller));
-router.put('/:id', controller.update.bind(controller));
-router.delete('/:id', controller.delete.bind(controller));
+router.get('/', controller.getAll);
+router.post('/', controller.create);
+router.get('/:id', controller.getOne);
+router.put('/:id', controller.update);
+router.delete('/:id', controller.delete);
 
 export default router;

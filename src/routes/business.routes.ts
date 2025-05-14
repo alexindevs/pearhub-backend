@@ -7,8 +7,8 @@ import { Role } from '../../generated/prisma';
 const router = Router();
 const controller = new BusinessController();
 
-router.get('/me', requireAuth, authorizeRole([Role.BUSINESS]), controller.getMyBusiness.bind(controller));
-router.put('/me', requireAuth, authorizeRole([Role.BUSINESS]), controller.updateMyBusiness.bind(controller));
-router.get('/:slug/meta', controller.getPublicBusinessMeta.bind(controller));
+router.get('/me', requireAuth, authorizeRole([Role.BUSINESS]), controller.getMyBusiness);
+router.put('/me', requireAuth, authorizeRole([Role.BUSINESS]), controller.updateMyBusiness);
+router.get('/:slug/meta', controller.getPublicBusinessMeta);
 
 export default router;

@@ -12,7 +12,8 @@ export class AuthController {
       res.status(201).json(result);
     } catch (error) {
       if (error instanceof Error && 'errors' in error) {
-        return res.status(400).json({ errors: (error as any).errors });
+        res.status(400).json({ errors: (error as any).errors });
+        return;
       }
       next(error);
     }
@@ -25,7 +26,8 @@ export class AuthController {
       res.status(200).json(result);
     } catch (error) {
       if (error instanceof Error && 'errors' in error) {
-        return res.status(400).json({ errors: (error as any).errors });
+        res.status(400).json({ errors: (error as any).errors });
+        return;
       }
       next(error);
     }

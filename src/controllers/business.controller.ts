@@ -9,7 +9,10 @@ export class BusinessController {
   async getMyBusiness(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const businessId = req.user?.businessId;
-      if (!businessId) return res.status(403).json({ message: 'Not a business account' });
+      if (!businessId) {
+        res.status(403).json({ message: 'Not a business account' })
+        return;
+      }
 
       const business = await businessService.getMyBusiness(businessId);
       res.status(200).json(business);
@@ -21,7 +24,10 @@ export class BusinessController {
   async updateMyBusiness(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const businessId = req.user?.businessId;
-      if (!businessId) return res.status(403).json({ message: 'Not a business account' });
+      if (!businessId) {
+        res.status(403).json({ message: 'Not a business account' })
+        return;
+      }
 
       const data = UpdateBusinessSchema.parse(req.body);
       const updated = await businessService.updateMyBusiness(businessId, data);
