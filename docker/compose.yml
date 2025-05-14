@@ -9,8 +9,6 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    ports:
-      - "4000:4000"
     environment:
       - NODE_ENV=production
     depends_on:
@@ -29,7 +27,7 @@ services:
     image: nginx:latest
     container_name: pearhub-backend_nginx
     ports:
-      - "80:80"
+      - "4000:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
