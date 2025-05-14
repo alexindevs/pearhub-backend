@@ -6,7 +6,7 @@
 
 ## 🔗 Live Documentation
 
-- 📘 **API Docs:** [http://localhost:3000/docs](http://localhost:3000/docs)
+- 📘 **API Docs:** [https://pearhub.mooo.com/docs](https://pearhub.mooo.com/docs)
 - 🗂 **Database Schema (DBML):** [View on dbdocs.io](https://dbdocs.io/alexindevs/PearHub-Pearmonie-Assessment)
 
 ---
