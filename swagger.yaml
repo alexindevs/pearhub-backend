@@ -1041,6 +1041,19 @@ components:
           type: string
         businessId:
           type: string
+        business:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            slug:
+              type: string
+            logo:
+              type: string
+              format: uri
         createdAt:
           type: string
           format: date-time
