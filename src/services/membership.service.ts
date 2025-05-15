@@ -22,4 +22,10 @@ export class MembershipService {
 
     return this.repo.deleteMembership(membershipId);
   }
+
+  async isMember(userId: string, businessId: string) {
+    const membership = await this.repo.membershipExists(userId, businessId);
+    if (!membership) throw new ApiError('Not a member of this business', 403);
+    return membership;
+  }
 }

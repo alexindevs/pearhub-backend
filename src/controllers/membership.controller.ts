@@ -53,4 +53,21 @@ export class MembershipController {
       next(error);
     }
   }
+
+  async amIAMember(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.userId;
+      const { id } = req.params;
+
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const isMember = await membershipService.isMember(userId, id);
+      res.status(200).json({ isMember });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
