@@ -79,4 +79,27 @@ export class AnalyticsService {
     const { from, to } = this.resolveDateRange(range);
     return this.repo.getDailyEngagementTrends(businessId, from, to);
   }
+
+  getContentTypeDistribution(businessId: string) {
+    return this.repo.getContentTypeDistribution(businessId);
+  }
+
+  getPostsPublishedOverTime(businessId: string, range?: any) {
+    const { from, to } = this.resolveDateRange(range);
+    return this.repo.getPostsPublishedOverTime(businessId, from, to);
+  }
+
+  getAverageInteractionsPerType(businessId: string, range?: any) {
+    const { from, to } = this.resolveDateRange(range);
+    return this.repo.getAverageInteractionsPerType(businessId, from, to);
+  }
+
+  getActiveMembers(businessId: string, range?: any) {
+    const { from, to } = this.resolveDateRange(range);
+    return this.repo.getActiveMembers(businessId, from, to);
+  }
+
+  getContentDetails(businessId: string, contentId: string) {
+    return this.repo.getContentDetails(businessId, contentId);
+  }
 }

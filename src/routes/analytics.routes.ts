@@ -14,5 +14,10 @@ router.get('/memberships', controller.memberships);
 router.get('/engagement', controller.engagement);
 router.get('/top-content', controller.topContent);
 router.get('/trends', controller.trends);
+router.get('/content-type-distribution', controller.contentTypeDistribution);
+router.get('/posts-published', controller.postsPublishedOverTime);
+router.get('/average-interactions', controller.averageInteractionsPerType);
+router.get('/active-members', controller.activeMembers);
+router.get('/content/:contentId/details', controller.contentDetails);
 
 export default router;

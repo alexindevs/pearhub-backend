@@ -86,4 +86,89 @@ export class AnalyticsController {
       next(err);
     }
   }
+
+  // New endpoints
+
+  async contentTypeDistribution(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      
+      if (!businessId) {
+        throw new ApiError('Business ID is required', 400);
+      }
+      
+      const data = await service.getContentTypeDistribution(businessId);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async postsPublishedOverTime(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      
+      if (!businessId) {
+        throw new ApiError('Business ID is required', 400);
+      }
+      
+      const range = AnalyticsQuerySchema.parse(req.query);
+      const data = await service.getPostsPublishedOverTime(businessId, range);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async averageInteractionsPerType(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      
+      if (!businessId) {
+        throw new ApiError('Business ID is required', 400);
+      }
+      
+      const range = AnalyticsQuerySchema.parse(req.query);
+      const data = await service.getAverageInteractionsPerType(businessId, range);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async activeMembers(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      
+      if (!businessId) {
+        throw new ApiError('Business ID is required', 400);
+      }
+      
+      const range = AnalyticsQuerySchema.parse(req.query);
+      const data = await service.getActiveMembers(businessId, range);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async contentDetails(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const businessId = req.user?.businessId;
+      const contentId = req.params.contentId;
+      
+      if (!businessId) {
+        throw new ApiError('Business ID is required', 400);
+      }
+
+      if (!contentId) {
+        throw new ApiError('Content ID is required', 400);
+      }
+      
+      const data = await service.getContentDetails(businessId, contentId);
+      res.status(200).json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
