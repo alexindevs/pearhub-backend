@@ -28,4 +28,8 @@ export class MembershipService {
     if (!membership) throw new ApiError('Not a member of this business', 403);
     return membership;
   }
+
+  async getPotentialMemberships(userId: string) {
+    return this.repo.getPotentialMemberships(userId);
+  }
 }

@@ -70,4 +70,19 @@ export class MembershipController {
       next(error);
     }
   }
+
+  async getPotential(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+  
+      const potential = await membershipService.getPotentialMemberships(userId);
+      res.status(200).json(potential);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

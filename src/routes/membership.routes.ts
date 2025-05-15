@@ -11,6 +11,7 @@ router.use(requireAuth, authorizeRole([Role.MEMBER]));
 
 router.post('/', controller.join);
 router.get('/', controller.getMyMemberships);
+router.get("/potential", controller.getPotential);
 router.get('/:id', controller.amIAMember);
 router.delete('/:id', controller.leave);
 
