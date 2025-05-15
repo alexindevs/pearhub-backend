@@ -30,6 +30,7 @@ export class FeedRepository {
                 OR: [
                   { type: 'LIKE' },
                   { type: 'COMMENT' },
+                  { type: 'CLICK' },
                   { type: 'SHARE' },
                   { type: 'VIEW' }
                 ]
@@ -78,6 +79,7 @@ export class FeedRepository {
     businessId: string;
     createdAt: Date;
     likes: number;
+    clicks: number;
     comments: number;
     shares: number;
     views: number;
@@ -87,6 +89,7 @@ export class FeedRepository {
     return contents.map((content: Content & { interactions?: Interaction[] }) => {
       // Count different interaction types
       const likes = content.interactions?.filter((i: Interaction) => i.type === 'LIKE').length || 0;
+      const clicks = content.interactions?.filter((i: Interaction) => i.type === 'CLICK').length || 0;
       const comments = content.interactions?.filter((i: Interaction) => i.type === 'COMMENT').length || 0;
       const shares = content.interactions?.filter((i: Interaction) => i.type === 'SHARE').length || 0;
       const views = content.interactions?.filter((i: Interaction) => i.type === 'VIEW').length || 0;
@@ -103,6 +106,7 @@ export class FeedRepository {
         createdAt: content.createdAt,
         // Add metrics for ranking algorithm
         likes,
+        clicks,
         comments,
         shares,
         views
