@@ -119,7 +119,7 @@ export class AnalyticsRepository {
     
     if (interval === 'day') {
       // Group by day
-      const posts = await prisma.$queryRaw`
+      const posts: any = await prisma.$queryRaw`
         SELECT 
           DATE(c."createdAt") as date,
           COUNT(*) as count
@@ -132,10 +132,13 @@ export class AnalyticsRepository {
         ORDER BY date ASC
       `;
       
-      return posts;
+      return posts.map((p: any) => ({
+  ...p,
+  count: typeof p.count === 'bigint' ? Number(p.count) : p.count,
+}));;
     } else {
       // Group by week
-      const posts = await prisma.$queryRaw`
+      const posts: any = await prisma.$queryRaw`
         SELECT 
           DATE_TRUNC('week', c."createdAt") as week_start,
           COUNT(*) as count
@@ -148,7 +151,10 @@ export class AnalyticsRepository {
         ORDER BY week_start ASC
       `;
       
-      return posts;
+      return posts.map((p: any) => ({
+  ...p,
+  count: typeof p.count === 'bigint' ? Number(p.count) : p.count,
+}));;
     }
   }
 
