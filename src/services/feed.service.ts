@@ -1,23 +1,8 @@
-import { FeedRepository } from "../repositories/feed.repository";
+import { ContentWithMetrics, FeedRepository } from "../repositories/feed.repository";
 
 interface RankedContent {
   content_id: string;
   score: number;
-}
-
-interface ContentWithMetrics {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  body: string;
-  mediaUrl: string | null;
-  tags: string[];
-  likes: number;
-  comments: number;
-  shares: number;
-  views: number;
-  [key: string]: any;
 }
 
 export class FeedService {
@@ -152,13 +137,13 @@ export class FeedService {
     }
     
     const rawContents = await this.repository.getContentsByBusinessId(businessId);
-    
-    const contentList = await this.repository.enrichContentWithMetrics(rawContents);
-    
+        
     const interactions = await this.repository.getUserInteractionsByBusinessId(
       userId, 
       businessId
     );
+
+    const contentList = await this.repository.enrichContentWithMetrics(rawContents, interactions);
 
     const interactionList = interactions.map(i => ({
       content_id: i.contentId,

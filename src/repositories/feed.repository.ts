@@ -2,6 +2,23 @@ import prisma from '../prisma/client';
 import { Content, Interaction } from "../../generated/prisma";
 import { PrismaClient } from '../../generated/prisma';
 
+export interface ContentWithMetrics {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  body: string;
+  mediaUrl: string | null;
+  tags: string[];
+  likes: number;
+  comments: number;
+  shares: number;
+  views: number;
+  user_interactions: {
+    [key: string]: boolean;
+  };
+  [key: string]: any;
+}
 export class FeedRepository {
   private prisma: PrismaClient;
 
@@ -68,32 +85,27 @@ export class FeedRepository {
     });
   }
 
-  async enrichContentWithMetrics(contents: (Content & { interactions?: Interaction[] })[]): Promise<{
-    id: string;
-    title: string;
-    description: string;
-    type: string;
-    body: string;
-    mediaUrl: string | null;
-    tags: string[];
-    businessId: string;
-    createdAt: Date;
-    likes: number;
-    clicks: number;
-    comments: number;
-    shares: number;
-    views: number;
-    [key: string]: unknown;
-  }[]> {
-    // Process the content to get the metrics in the format we need
-    return contents.map((content: Content & { interactions?: Interaction[] }) => {
-      // Count different interaction types
-      const likes = content.interactions?.filter((i: Interaction) => i.type === 'LIKE').length || 0;
-      const clicks = content.interactions?.filter((i: Interaction) => i.type === 'CLICK').length || 0;
-      const comments = content.interactions?.filter((i: Interaction) => i.type === 'COMMENT').length || 0;
-      const shares = content.interactions?.filter((i: Interaction) => i.type === 'SHARE').length || 0;
-      const views = content.interactions?.filter((i: Interaction) => i.type === 'VIEW').length || 0;
-
+  async enrichContentWithMetrics(
+    contents: (Content & { interactions?: Interaction[] })[],
+    userInteractions: Interaction[] = []
+  ): Promise<ContentWithMetrics[]> {
+    // Build map of contentId → { VIEW: true, LIKE: true, ... }
+    const userMap: Record<string, Record<string, boolean>> = {};
+  
+    for (const i of userInteractions) {
+      if (!userMap[i.contentId]) {
+        userMap[i.contentId] = {};
+      }
+      userMap[i.contentId][i.type] = true;
+    }
+  
+    return contents.map((content) => {
+      const likes = content.interactions?.filter((i) => i.type === 'LIKE').length || 0;
+      const clicks = content.interactions?.filter((i) => i.type === 'CLICK').length || 0;
+      const comments = content.interactions?.filter((i) => i.type === 'COMMENT').length || 0;
+      const shares = content.interactions?.filter((i) => i.type === 'SHARE').length || 0;
+      const views = content.interactions?.filter((i) => i.type === 'VIEW').length || 0;
+  
       return {
         id: content.id,
         title: content.title,
@@ -104,13 +116,15 @@ export class FeedRepository {
         tags: content.tags,
         businessId: content.businessId,
         createdAt: content.createdAt,
-        // Add metrics for ranking algorithm
         likes,
         clicks,
         comments,
         shares,
-        views
+        views,
+        user_interactions: userMap[content.id] || {}  // ← inject here
       };
     });
   }
+  
+  
 }
