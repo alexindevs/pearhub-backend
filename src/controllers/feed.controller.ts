@@ -52,7 +52,8 @@ export class FeedController {
       const userId = req.user?.userId;
   
       if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "Unauthorized" });
+        return;
       }
   
       const content = await feedService.getContentDetails(contentId, userId);

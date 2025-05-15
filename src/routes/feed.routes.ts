@@ -13,5 +13,11 @@ router.get(
   authorizeRole([Role.MEMBER]),
   controller.getFeed
 );
+router.get(
+  '/:contentId',
+  requireAuth,
+  authorizeRole([Role.MEMBER]),
+  controller.getContentDetails
+);
 
 export default router;
