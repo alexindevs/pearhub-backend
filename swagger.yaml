@@ -706,10 +706,23 @@ paths:
               schema:
                 type: object
                 properties:
-                  data:
+                  contents:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Content'
+                      $ref: '#/components/schemas/FeedItem'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      hasMore:
+                        type: boolean
         '403':
           description: Unauthorized (not a MEMBER or not subscribed)
           content:
@@ -728,6 +741,97 @@ paths:
                 properties:
                   error:
                     type: string
+
+  /feed/post/{contentId}:
+    get:
+      tags:
+        - Feed
+      summary: Get full details for a specific content item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: contentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Full content analytics and comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  body:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                    enum: [TEXT, IMAGE, LONGFORM, LINK]
+                  mediaUrl:
+                    type: string
+                    nullable: true
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  stats:
+                    type: object
+                    properties:
+                      likes:
+                        type: integer
+                      views:
+                        type: integer
+                      comments:
+                        type: integer
+                      shares:
+                        type: integer
+                      clicks:
+                        type: integer
+                  user_interactions:
+                    type: object
+                    properties:
+                      VIEW:
+                        type: boolean
+                      LIKE:
+                        type: boolean
+                      COMMENT:
+                        type: boolean
+                      SHARE:
+                        type: boolean
+                      CLICK:
+                        type: boolean
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: string
+                        payload:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 
 components:
   securitySchemes:
@@ -1169,3 +1273,53 @@ components:
           - code: invalid_enum_value
             message: Invalid enum value
             path: [type]
+
+    FeedItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [TEXT, IMAGE, LONGFORM, LINK]
+        body:
+          type: string
+        mediaUrl:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        businessId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        likes:
+          type: integer
+        clicks:
+          type: integer
+        comments:
+          type: integer
+        shares:
+          type: integer
+        views:
+          type: integer
+        user_interactions:
+          type: object
+          properties:
+            VIEW:
+              type: boolean
+            LIKE:
+              type: boolean
+            COMMENT:
+              type: boolean
+            SHARE:
+              type: boolean
+            CLICK:
+              type: boolean

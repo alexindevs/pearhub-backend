@@ -112,12 +112,20 @@ export class FeedRepository {
       clicks: 0,
     };
 
+    const typeMapping: Record<string, keyof typeof stats> = {
+      LIKE: 'likes',
+      VIEW: 'views',
+      COMMENT: 'comments',
+      SHARE: 'shares',
+      CLICK: 'clicks',
+    };
+
     interactions.forEach((interaction) => {
-      if (interaction.type in stats) {
-        stats[interaction.type.toLowerCase() as keyof typeof stats] = interaction._count;
+      const key = typeMapping[interaction.type];
+      if (key) {
+        stats[key] = interaction._count;
       }
     });
-
     return stats;
   }
 
