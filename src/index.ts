@@ -10,6 +10,7 @@ import contentRoutes from './routes/content.routes';
 import membershipRoutes from './routes/membership.routes';
 import interactionRoutes from './routes/interaction.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import feedRoutes from './routes/feed.routes';
 
 import { ApiError } from './utils/api-error';
 import { errorHandlerMiddleware } from './middlewares/error.middleware';
@@ -38,6 +39,7 @@ app.use('/content', contentRoutes);
 app.use('/memberships', membershipRoutes);
 app.use('/interactions', interactionRoutes);
 app.use('/analytics', analyticsRoutes);
+app.use('/feed', feedRoutes);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
