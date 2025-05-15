@@ -116,6 +116,53 @@ export class FeedService {
     return ranked;
   }
 
+  async getContentDetails(contentId: string, userId: string): Promise<any> {
+    const content = await this.repository.getContentById(contentId);
+
+    if (!content) {
+      throw new Error(`Content with ID ${contentId} not found`);
+    }
+
+    const stats = await this.repository.getContentStats(contentId);
+
+    const userInteractions = await this.repository.getUserInteractionsByContentId(
+      userId,
+      contentId
+    );
+
+    const comments = await this.repository.getContentComments(contentId);
+
+    return {
+      id: content.id,
+      title: content.title,
+      body: content.body,
+      description: content.description,
+      type: content.type,
+      mediaUrl: content.mediaUrl,
+      tags: content.tags,
+      createdAt: content.createdAt,
+      stats: {
+        likes: stats.likes || 0,
+        views: stats.views || 0,
+        comments: stats.comments || 0,
+        shares: stats.shares || 0,
+        clicks: stats.clicks || 0,
+      },
+      user_interactions: {
+        LIKE: userInteractions.some((i) => i.type === "LIKE"),
+        VIEW: userInteractions.some((i) => i.type === "VIEW"),
+        COMMENT: userInteractions.some((i) => i.type === "COMMENT"),
+        SHARE: userInteractions.some((i) => i.type === "SHARE"),
+        CLICK: userInteractions.some((i) => i.type === "CLICK"),
+      },
+      comments: comments.map((comment) => ({
+        user: comment.user,
+        payload: comment.payload,
+        createdAt: comment.createdAt,
+      })),
+    };
+  }
+
   async getRankedFeedContent(
     userId: string,
     businessSlug: string,

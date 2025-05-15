@@ -45,4 +45,20 @@ export class FeedController {
       next(err);
     }
   }
+
+  async getContentDetails(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const { contentId } = req.params;
+      const userId = req.user?.userId;
+  
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+  
+      const content = await feedService.getContentDetails(contentId, userId);
+      res.status(200).json(content);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

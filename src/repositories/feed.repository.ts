@@ -85,6 +85,89 @@ export class FeedRepository {
     });
   }
 
+  async getContentById(contentId: string): Promise<Content | null> {
+    return this.prisma.content.findUnique({
+      where: { id: contentId },
+    });
+  }
+
+  async getContentStats(contentId: string): Promise<{
+    likes: number;
+    views: number;
+    comments: number;
+    shares: number;
+    clicks: number;
+  }> {
+    const interactions = await this.prisma.interaction.groupBy({
+      by: ['type'],
+      where: { contentId },
+      _count: true,
+    });
+
+    const stats = {
+      likes: 0,
+      views: 0,
+      comments: 0,
+      shares: 0,
+      clicks: 0,
+    };
+
+    interactions.forEach((interaction) => {
+      if (interaction.type in stats) {
+        stats[interaction.type.toLowerCase() as keyof typeof stats] = interaction._count;
+      }
+    });
+
+    return stats;
+  }
+
+  async getUserInteractionsByContentId(
+    userId: string,
+    contentId: string
+  ): Promise<Interaction[]> {
+    return this.prisma.interaction.findMany({
+      where: {
+        userId,
+        contentId,
+      },
+    });
+  }
+
+  async getContentComments(contentId: string): Promise<
+    {
+      user: { id: string; name: string };
+      payload: string | null;
+      createdAt: Date;
+    }[]
+  > {
+    const comments = await this.prisma.interaction.findMany({
+      where: {
+        contentId,
+        type: 'COMMENT',
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        payload: true,
+        createdAt: true,
+      },
+    });
+
+    // filter out comments with null payload
+
+    const filteredComments = comments.filter((comment) => comment.payload !== null);
+
+    return filteredComments.map((comment) => ({
+      user: comment.user,
+      payload: comment.payload,
+      createdAt: comment.createdAt,
+    }));
+  }
+
   async enrichContentWithMetrics(
     contents: (Content & { interactions?: Interaction[] })[],
     userInteractions: Interaction[] = []
