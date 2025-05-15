@@ -8,16 +8,16 @@ const router = Router();
 const controller = new FeedController();
 
 router.get(
+  '/post/:contentId',
+  requireAuth,
+  authorizeRole([Role.MEMBER]),
+  controller.getContentDetails
+);
+router.get(
   '/:businessSlug',
   requireAuth,
   authorizeRole([Role.MEMBER]),
   controller.getFeed
-);
-router.get(
-  '/:contentId',
-  requireAuth,
-  authorizeRole([Role.MEMBER]),
-  controller.getContentDetails
 );
 
 export default router;
